@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: ./build_docker.sh
+
+    - name: Container image scan
+      uses: Azure/container-scan@v0.1
+      with:
+        image-name: ondrno/build-qt:latest
+        # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
+        severity-threshold: HIGH # optional, default is HIGH
+        token: ${{ github.token }}
+        run-quality-checks: true  # optional, default is true
+
